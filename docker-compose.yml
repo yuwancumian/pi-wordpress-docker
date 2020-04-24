@@ -1,0 +1,36 @@
+version: '2'
+services:
+  db:
+    image: hypriot/rpi-mysql
+    container_name: db
+    environment:
+      - MYSQL_ROOT_PASSWORD=examplepass
+      - MYSQL_DATABASE=wordpress
+    ports:
+      - "3306:3306"
+    networks:
+      - wp-network
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      
+  wordpress:
+    depends_on: 
+      - db
+    image: arm32v7/wordpress
+    container_name: wp
+    environment: 
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=root
+      - WORDPRESS_DB_PASSWORD=examplepass
+      - WORDPRESS_DB_NAME=wordpress
+    ports:
+      - "8000:80"
+    networks:
+      - wp-network
+    volumes:
+      - ./www-data:/var/www/html
+networks:
+  wp-network:
+    driver: bridge
+
+    
